@@ -1,0 +1,16 @@
+{
+  "engines": {
+    "node": "8"
+  },
+  "name": "twitch-react-auto-claimer",
+  "version": "1.0.0",
+  "description": "twitch react auto claimer",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "YakoHobisa",
+  "license": "ISC"
+  
+}

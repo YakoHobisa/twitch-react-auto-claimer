@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name Twitch React Auto Claimer
-// @version 1.1.1
+// @version 2.3.8
 // @author YakoHobisa
+// @author Den3er
 // @author alex_lova
 // @description Auto claim twitch channel reactions.
 // @match https://www.twitch.tv/*
@@ -10,50 +11,55 @@
 // @license alex_lova
 // ==/UserScript==
 
-
-const clasnameR = "ScCoreButton-sc-ocjdkq-0 ScCoreButtonText-sc-ocjdkq-3 ibtYyW jYfhUy";
-const classnameReact2 = "ScCheckBoxInputBase-sc-vu7u7d-1 gBDDIa tw-radio__input";
-const classnameReact3 = "ScCoreButton-sc-ocjdkq-0 ScCoreButtonPrimary-sc-ocjdkq-1 ibtYyW wgheP";
-const reactClose = "ButtonIconFigure-sc-1emm8lf-0 bxQRSJ";
-
-async function main(){
-    let buttoncounter = 0;
-    while (true){
-
-    while (document.getElementsByClassName(clasnameR)[0] == undefined){
-          await sleep(1000);
-      }
-    if (document.getElementsByClassName(clasnameR).length == 2)
-    {
-
-        document.getElementsByClassName(clasnameR)[0].click();
-        await sleep(300);
-        try {
-
-          document.getElementsByClassName(classnameReact2)[getRandomInt(5)].click();
-
-        } catch (e){
-          console.log("need ttv to w8")
-        }
-        await sleep(300);
-        document.getElementsByClassName(classnameReact3)[document.getElementsByClassName(classnameReact3).length-1].click();
-        await sleep(300);
-        document.getElementsByClassName(reactClose)[document.getElementsByClassName(reactClose).length-1].click();
-        buttoncounter++;
-        console.log("Button clicked: " + buttoncounter);
-        await sleep(5000);
-    } else {
-    await sleep(305000);
-
-    }
+// hide the modal box with a reaction content
+const styles = `
+  .ReactModalPortal:has(.feedback-flow-modal) {
+    display: none;
   }
-};
+`;
 
-function sleep(milliseconds) {
-    return new Promise(resolve => setTimeout(resolve, milliseconds));
-}
+const styleSheet = document.createElement("style");
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 
-function getRandomInt(max) {
+setInterval(() => {
+  const $reactButton = Array.from(
+    document.querySelectorAll('[data-a-target="tw-core-button-label-text"]')
+  ).find((element) => element.textContent === "React");
+
+  const $notifElem = Array.from(
+    document.querySelectorAll(".Layout-sc-1xcs6mc-0.eHKPFw")
+  ).find((element) => element.textContent === "Turn on Notifications");
+
+  const $editPanelsButt = Array.from(
+    document.querySelectorAll(".CoreText-sc-1txzju1-0")
+  ).find((element) => element.textContent === "Edit Panels");
+
+  if (!$reactButton || $notifElem || $editPanelsButt) {
+    return;
+  }
+
+  $reactButton.click();
+
+  setTimeout(() => {
+    $reacts = document.querySelectorAll(
+      ".ScCheckBoxInputBase-sc-vu7u7d-1.eNJaYf.tw-radio__input"
+    );
+    $randomReact = $reacts[getRandomInt(5)];
+    $randomReact.click();
+
+    const $submit = document.querySelector(
+      ".ReactModalPortal .Layout-sc-1xcs6mc-0.eHKPFw"
+    );
+    $submit.click();
+
+    const $close = document.querySelector(
+      ".ReactModalPortal .ScCoreButton-sc-ocjdkq-0.hZACqf.ScButtonIcon-sc-9yap0r-0.cClrQk"
+    );
+    $close.click();
+  }, 1000);
+}, 10 * 1000);
+
+const getRandomInt = (max) => {
   return Math.floor(Math.random() * max);
 }
-main();
